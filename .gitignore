@@ -3,6 +3,10 @@ artifacts
 racecar
 lightning_logs
 wandb
+*.zip
+test.png
+runs/
+videos/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -3,6 +3,8 @@ import os
 import uuid
 
 import cv2
+import numpy as np
+from PIL import Image
 
 
 def make_dirs(output_dataset):
@@ -72,7 +74,28 @@ def show_label(image, coordinates, color=(0, 255, 0)):
 def torch2cv2(tensor):
     img = tensor.permute(1, 2, 0).cpu().numpy()*255
     img = cv2.cvtColor(
-                img, cv2.COLOR_BGR2RGB
-                )
+        img, cv2.COLOR_BGR2RGB
+    )
 
     return img
+
+
+def crop_center(pil_img, crop_width, crop_height):
+    img_width, img_height = pil_img.size
+    return pil_img.crop(((img_width - crop_width) // 2,
+                         (img_height - crop_height) // 2,
+                         (img_width + crop_width) // 2,
+                         (img_height + crop_height) // 2))
+
+
+def resize_to_square(obs, size):
+    im = Image.fromarray(obs)
+
+    baseheight = size
+    hpercent = (baseheight/float(im.size[1]))
+    wsize = int((float(im.size[0])*float(hpercent)))
+    img = im.resize((wsize, baseheight), Image.ANTIALIAS)
+
+    img = crop_center(img, size, size)
+
+    return np.array(img)
